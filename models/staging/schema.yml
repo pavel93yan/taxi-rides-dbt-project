@@ -126,6 +126,9 @@ models:
                     severity: warn
                 - not_null:
                     severity: warn
+                - assert_test_generic:
+                    severity: warn
+                    count: 1
           - name: VendorID 
             description: > 
                 A code indicating the TPEP provider that provided the record.
