@@ -28,3 +28,4 @@ select
 from {{ ref("fact_trips") }}
 
 group by 1, 2, 3
+--test comment
