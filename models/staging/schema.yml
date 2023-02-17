@@ -15,6 +15,7 @@ sources:
       tables:
         - name: green_tripdata_partitoned_clustered
         - name: yellow_tripdata_non_partitoned
+        - name: fhv_tripdata_partitoned_clustered
          # freshness:
            # error_after: {count: 6, period: hour}
 
@@ -112,6 +113,7 @@ models:
             description: The total amount charged to passengers. Does not include cash tips.
 
     - name: stg_yellow_tripdata
+    
       description: > 
         Trips made by New York City's iconic yellow taxis. 
         Yellow taxis are the only vehicles permitted to respond to a street hail from a passenger in all five
@@ -205,3 +207,50 @@ models:
             description: Total amount of all tolls paid in trip.
           - name: Total_amount 
             description: The total amount charged to passengers. Does not include cash tips.
+
+
+    - name: stg_fhv_tripdata
+      
+      description: >
+        For-Hire Vehicle (“FHV”) trip records include fields capturing the dispatching base license number
+        and the pick-up date, time, and taxi zone location ID. These records are generated from the FHV Trip Record
+        submissions made by bases.
+      columns:
+          - name: tripid
+            description: Primary key for this table, generated with a concatenation of dispatching_base_num + pickup_datetime
+            tests:
+              - unique:
+                  severity: warn
+              - not_null:
+                  severity: warn
+          - name: dispatching_base_num
+            description: The TLC Base License Number of the base that dispatched the trip.
+            tests:
+              - not_null:
+                  severity: warn
+                
+          - name: pickup_datetime
+            description: The date and time of the trip pick-up
+          - name: dropOff_datetime
+            description: The date and time of the trip dropoff.
+          - name: PUlocationID
+            description: TLC Taxi Zone in which the trip began.
+            tests:
+              - relationships:
+                  to: ref('taxi_zone_lookup')
+                  field: locationid
+                  severity: warn
+          - name: DOlocationID
+            description: TLC Taxi Zone in which the trip ended.
+            tests:
+              - relationships:
+                  to: ref('taxi_zone_lookup')
+                  field: locationid
+                  severity: warn
+          - name: SR_Flag
+            description: >
+              Indicates if the trip was a part of a shared ride chain offered by a
+              High Volume FHV company (e.g. Uber Pool, Lyft Line). For shared
+              trips, the value is 1. For non-shared rides, this field is null
+          - name: Affiliated_base_number
+            description: represents Affiliated base number          
