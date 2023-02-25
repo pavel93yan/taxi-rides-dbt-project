@@ -4,7 +4,7 @@ with tripdata as
 (
   select *,
     row_number() over(partition by vendorid, tpep_pickup_datetime) as rn
-  from {{ source('staging','yellow_tripdata_non_partitoned') }}
+  from {{ source('staging','yellow_tripdata') }}
   where vendorid is not null 
 )
 select
@@ -36,8 +36,8 @@ select
     cast(improvement_surcharge as numeric) as improvement_surcharge,
     cast(total_amount as numeric) as total_amount,
     cast(payment_type as integer) as payment_type,
-    {{ get_payment_type_description('payment_type') }} as payment_type_description, 
-    cast(congestion_surcharge as numeric) as congestion_surcharge
+    {{ get_payment_type_description_by_string('payment_type') }} as payment_type_description, 
+    cast(airport_fee as numeric) as airport_fee
 from tripdata
 where rn = 1
 

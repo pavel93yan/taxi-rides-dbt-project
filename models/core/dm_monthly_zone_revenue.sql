@@ -18,7 +18,6 @@ select
     sum(ehail_fee) as revenue_monthly_ehail_fee,
     sum(improvement_surcharge) as revenue_monthly_improvement_surcharge,
     sum(total_amount) as revenue_monthly_total_amount,
-    sum(congestion_surcharge) as revenue_monthly_congestion_surcharge,
 
     -- Additional calculations
     count(tripid) as total_monthly_trips,
@@ -28,3 +27,4 @@ select
 from {{ ref("fact_trips") }}
 
 group by 1, 2, 3
+--test comment
